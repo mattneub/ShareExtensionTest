@@ -11,7 +11,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
 
-    
+    let group = "group.com.neuburg.matt.ShareExtensionTest.sharedData"
+
+    func scene(
+        _ scene: UIScene,
+        openURLContexts contexts: Set<UIOpenURLContext>
+    ) {
+        print(#function)
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group) else {
+            print("no container URL")
+            return
+        }
+        if let files = try? FileManager.default.contentsOfDirectory(atPath: containerURL.path) {
+            print("files", files)
+            for file in files {
+                print("found", file)
+                if let data = try? Data(contentsOf: containerURL.appending(path: file)) {
+                    if let image = UIImage(data: data) {
+                        print("it's an image")
+                    }
+                }
+            }
+        }
+    }
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.

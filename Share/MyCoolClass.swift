@@ -1,36 +1,61 @@
 import UIKit
 import os.log
+import UniformTypeIdentifiers
 
 let logger = Logger(subsystem: "MyCoolClass", category: "debugging")
 
 @objc(MyCoolClass)
 class MyCoolClass: UIViewController /*, NSExtensionRequestHandling */ {
+    var context: NSExtensionContext?
+
+    let group = "group.com.neuburg.matt.ShareExtensionTest.sharedData"
+
     override func beginRequest(with context: NSExtensionContext) {
-        print(#function)
-        context.completeRequest(returningItems: nil)
+        logger.log(#function)
+        self.context = context
+        guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group) else {
+            return
+        }
+        if let files = try? FileManager.default.contentsOfDirectory(atPath: containerURL.path) {
+            for file in files {
+                try? FileManager.default.removeItem(at: containerURL.appending(path: file))
+            }
+        }
+        for item in context.inputItems {
+            if let item = item as? NSExtensionItem {
+                for provider in (item.attachments ?? []) {
+                    _ = provider.loadDataRepresentation(for: .image) { data, error in
+                        if let data {
+                            let file = UUID().uuidString
+                            do {
+                                try data.write(to: containerURL.appending(path: file))
+                                logger.log("\(file)")
+                            } catch {
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print(#function)
-        self.openURL(URL(string: "mycooltest://")!)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        logger.log(#function)
+        context?.completeRequest(returningItems: nil) { [weak self] _ in
+            self?.openURL(URL(string: "mycooltest://")!)
+        }
     }
 
-    @objc @discardableResult private func openURL(_ url: URL) -> Bool {
-        print(#function)
+    func openURL(_ url: URL) {
+        logger.log(#function)
         var responder: UIResponder? = self
         while responder != nil {
             if let application = responder as? UIApplication {
-                if #available(iOS 18.0, *) {
-                    application.open(url, options: [:], completionHandler: nil)
-                    return true
-                } else {
-                    return application.perform(#selector(openURL(_:)), with: url) != nil
-                }
+                application.open(url, options: [:], completionHandler: nil)
+                return
             }
             responder = responder?.next
         }
-        return false
     }
-
 }
