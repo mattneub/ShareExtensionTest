@@ -1,14 +1,10 @@
 import UIKit
-import os.log
 import UniformTypeIdentifiers
 
-let logger = Logger(subsystem: "MyCoolClass", category: "debugging")
 
 @objc(MyCoolClass)
-class MyCoolClass: UIViewController /*, NSExtensionRequestHandling */ {
+class MyCoolClass: UIViewController {
     var context: NSExtensionContext?
-
-    let group = "group.com.neuburg.matt.ShareExtensionTest.sharedData"
 
     override func beginRequest(with context: NSExtensionContext) {
         logger.log(#function)
@@ -18,6 +14,7 @@ class MyCoolClass: UIViewController /*, NSExtensionRequestHandling */ {
         }
         if let files = try? FileManager.default.contentsOfDirectory(atPath: containerURL.path) {
             for file in files {
+                if file.hasPrefix(".") { continue }
                 try? FileManager.default.removeItem(at: containerURL.appending(path: file))
             }
         }
@@ -29,7 +26,7 @@ class MyCoolClass: UIViewController /*, NSExtensionRequestHandling */ {
                             let file = UUID().uuidString
                             do {
                                 try data.write(to: containerURL.appending(path: file))
-                                logger.log("\(file)")
+                                logger.log("wrote \(file, privacy: .public)")
                             } catch {
                             }
                         }

@@ -55,6 +55,13 @@
 			);
 			target = 3F52864B2D3B323A00678599 /* Share */;
 		};
+		3F93A9892D3C43FA000C0DDA /* Exceptions for "Share" folder in "ShareExtensionTest" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Globals.swift,
+			);
+			target = 3F5286172D3B2F2A00678599 /* ShareExtensionTest */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -69,6 +76,7 @@
 		3F52864D2D3B323A00678599 /* Share */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
+				3F93A9892D3C43FA000C0DDA /* Exceptions for "Share" folder in "ShareExtensionTest" target */,
 				3F52865A2D3B323A00678599 /* Exceptions for "Share" folder in "Share" target */,
 			);
 			path = Share;
