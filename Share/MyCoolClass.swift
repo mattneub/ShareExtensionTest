@@ -40,11 +40,12 @@ class MyCoolClass: UIViewController {
         super.viewWillAppear(animated)
         logger.log(#function)
         context?.completeRequest(returningItems: nil) { [weak self] _ in
-            self?.openURL(URL(string: "mycooltest://")!)
+            self?.openURL(URL(string: "mycooltest:"))
         }
     }
 
-    func openURL(_ url: URL) {
+    func openURL(_ url: URL?) {
+        guard let url else { return }
         logger.log(#function)
         var responder: UIResponder? = self
         while responder != nil {

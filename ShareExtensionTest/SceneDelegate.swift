@@ -6,9 +6,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func scene(
         _ scene: UIScene,
+        willConnectTo session: UISceneSession,
+        options connectionOptions: UIScene.ConnectionOptions
+    ) {
+        if let _ = connectionOptions.urlContexts.first {
+            logger.log("\(#function, privacy: .public)")
+            handleURLContext()
+        }
+    }
+
+    func scene(
+        _ scene: UIScene,
         openURLContexts contexts: Set<UIOpenURLContext>
     ) {
-        print(#function)
+        logger.log("\(#function, privacy: .public)")
+        handleURLContext()
+    }
+
+    func handleURLContext() {
+        logger.log("\(#function, privacy: .public)")
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group) else {
             logger.log("no container URL")
             return
@@ -19,7 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 logger.log("found \(file, privacy: .public)")
                 if let data = try? Data(contentsOf: containerURL.appending(path: file)) {
                     if let _ = UIImage(data: data) {
-                        print("it's an image")
+                        logger.log("it's an image")
                     }
                 }
             }
