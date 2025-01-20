@@ -29,14 +29,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             logger.log("no container URL")
             return
         }
-        if let files = try? FileManager.default.contentsOfDirectory(atPath: containerURL.path) {
-            for file in files {
-                if file.hasPrefix(".") { continue }
-                logger.log("found \(file, privacy: .public)")
-                if let data = try? Data(contentsOf: containerURL.appending(path: file)) {
-                    if let _ = UIImage(data: data) {
-                        logger.log("it's an image")
-                    }
+        guard let files = try? FileManager.default.contentsOfDirectory(
+            at: containerURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ) else {
+            logger.log("no contents")
+            return
+        }
+        for file in files {
+            logger.log("found \(file, privacy: .public)")
+            if let data = try? Data(contentsOf: file) {
+                if let _ = UIImage(data: data) {
+                    logger.log("it's an image")
                 }
             }
         }

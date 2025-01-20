@@ -12,11 +12,15 @@ class MyCoolClass: UIViewController {
         guard let containerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: group) else {
             return
         }
-        if let files = try? FileManager.default.contentsOfDirectory(atPath: containerURL.path) {
-            for file in files {
-                if file.hasPrefix(".") { continue }
-                try? FileManager.default.removeItem(at: containerURL.appending(path: file))
-            }
+        guard let files = try? FileManager.default.contentsOfDirectory(
+            at: containerURL,
+            includingPropertiesForKeys: nil,
+            options: .skipsHiddenFiles
+        ) else {
+            return
+        }
+        for file in files {
+            try? FileManager.default.removeItem(at: file)
         }
         for item in context.inputItems {
             if let item = item as? NSExtensionItem {
